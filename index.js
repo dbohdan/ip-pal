@@ -23,10 +23,12 @@ const BLACK = new RGBColor(0, 0, 0);
 const RED = new RGBColor(0xff, 0, 0);
 const WHITE = new RGBColor(0xff, 0xff, 0xff);
 
+const DEC_DIGITS = /^[0-9]+$/;
 const DEFAULT_BACKGROUND = WHITE;
 const DEFAULT_PALETTE = "palette/apollo.gpl";
 const EMPTY_COLOR = DEFAULT_BACKGROUND;
 const ERROR_COLOR = RED;
+const HEX_DIGITS = /^[0-9a-fA-F]+$/;
 const HIGHLIGHT_SPAN_EMPTY = "highlight-span-empty";
 const HIGHLIGHT_SPAN = "highlight-span";
 const IPV4 = "ipv4";
@@ -46,14 +48,30 @@ function textColor(bgColor) {
     return bgColor.luminance() > 0.5 ? BLACK : WHITE;
 }
 
+function parseDec(string) {
+    if (!DEC_DIGITS.test(string)) {
+        return NaN;
+    }
+
+    return parseInt(string, 10);
+}
+
+function parseHex(string) {
+    if (!HEX_DIGITS.test(string)) {
+        return NaN;
+    }
+
+    return parseInt(string, 16);
+}
+
 function parseIPAddress(input) {
-    if (input.includes(".") || /^[0-9]+$/.test(input)) {
+    if (input.includes(".") || DEC_DIGITS.test(input)) {
         const textOctets = input.includes(".") ? input.split(".") : [input];
 
         const lastIndex = textOctets.length - 1;
 
         const groups = textOctets.map((text, i) => {
-            const num = parseInt(text, 10);
+            const num = parseDec(text);
             const validNum = !isNaN(num) && num >= 0 && num <= 255;
             const valid = i < 4 &&
                 (validNum || (text === "" && i === lastIndex));
@@ -71,7 +89,7 @@ function parseIPAddress(input) {
         };
     }
 
-    if (input.includes(":") || /^[0-9a-fA-F]+$/.test(input)) {
+    if (input.includes(":") || HEX_DIGITS.test(input)) {
         const textGroups = input.includes(":") ? input.split(":") : [input];
 
         const lastIndex = textGroups.length - 1;
@@ -79,7 +97,7 @@ function parseIPAddress(input) {
         let seenEmpty = false;
 
         const groups = textGroups.map((text, i) => {
-            const num = parseInt(text, 16);
+            const num = parseHex(text);
             const validNum = !isNaN(num) && num >= 0 && num <= 0xffff;
             const valid = i < 16 &&
                 (validNum || (text === "" && (!seenEmpty || i === lastIndex)));
@@ -190,7 +208,6 @@ function updateHighlight() {
     const output = document.getElementById("highlight-display");
 
     const highlightData = highlight(input);
-    console.log(highlightData);
     renderHighlightToDOM(highlightData, output);
 }
 
@@ -288,7 +305,7 @@ function parseGimpPalette(text) {
             if (key.toLowerCase() === "name") {
                 palette.name = value;
             } else if (key.toLowerCase() === "columns") {
-                palette.columns = parseInt(value) || 0;
+                palette.columns = parseDec(value) || 0;
             }
 
             continue;
@@ -299,7 +316,7 @@ function parseGimpPalette(text) {
         if (colorMatch) {
             const [_, r, g, b, name] = colorMatch;
             palette.colors.push({
-                color: new RGBColor(parseInt(r), parseInt(g), parseInt(b)),
+                color: new RGBColor(parseDec(r), parseDec(g), parseDec(b)),
                 name: name.trim() || `Color ${palette.colors.length + 1}`,
             });
         }
