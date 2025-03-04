@@ -1,4 +1,36 @@
 :root {
+    /* Colors modified from the Apollo palette. */
+    --body-bg: #eff0ec;
+    --body-color: #090a14;
+    --input-bg: #fbfdf9;
+    --output-bg: var(--input-bg);
+    --border-color: #577277;
+    --button-bg: #486165;
+    --button-bg-hover: #819796;
+    --error-color: #a53030;
+
+    /* Dimensions. */
+    --border-radius: 5px;
+    --border-width: 2px;
+    --button-padding: 10px 15px;
+    --fieldset-padding: 15px;
+    --large-padding: 20px;
+    --max-width: 900px;
+    --medium-spacing: 20px;
+    --padding: 10px;
+    --small-border-radius: 3px;
+    --small-spacing: 10px;
+    --textarea-height: 200px;
+
+    /* Typography. */
+    --font-body: Arial, sans-serif;
+    --font-mono: monospace;
+    --font-size: 18px;
+    --line-height: 1.6;
+
+    /* Animation. */
+    --transition-duration: 0.3s;
+
     box-sizing: border-box;
 }
 
@@ -7,11 +39,14 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
+    color: var(--body-color);
+    background-color: var(--body-bg);
+    font-family: var(--font-body);
+    font-size: var(--font-size);
+    line-height: var(--line-height);
     margin: 0 auto;
-    max-width: 900px;
-    padding: 20px;
+    max-width: var(--max-width);
+    padding: var(--large-padding);
 }
 
 main {
@@ -22,13 +57,13 @@ main {
 form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--small-spacing);
 }
 
 fieldset {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 15px;
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: var(--fieldset-padding);
 }
 
 legend {
@@ -41,32 +76,30 @@ legend {
 }
 
 input[type="text"] {
-    background-color: transparent;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-family: monospace;
-    font-size: 18px;
-    padding: 10px;
+    background-color: var(--input-bg);
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius);
+    font: inherit;
+    padding: var(--padding);
     position: relative;
     width: 100%;
     z-index: 2;
 }
 
 output {
-    background-color: #f8f8f8;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    background-color: var(--output-bg);
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius);
     display: block;
-    font-family: 'Courier New', monospace;
-    font-size: 18px;
-    margin-top: 10px;
+    font-family: var(--font-mono);
+    margin-top: var(--small-spacing);
     min-height: 42px;
-    padding: 10px;
+    padding: var(--padding);
     width: 100%;
 }
 
 .highlight-span {
-    border-radius: 3px;
+    border-radius: var(--small-border-radius);
     margin: 0 1px;
     padding: 2px 3px;
 }
@@ -76,38 +109,41 @@ output {
 }
 
 textarea {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-family: 'Courier New', monospace;
-    height: 200px;
-    padding: 10px;
+    background-color: var(--input-bg);
+    border: var(--border-width) solid var(--border-color);
+    border-radius: var(--border-radius);
+    font: inherit;
+    font-family: var(--font-mono);
+    height: var(--textarea-height);
+    padding: var(--padding);
     width: 100%;
 }
 
 button {
-    background-color: #4CAF50;
+    background-color: var(--button-bg);
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     color: white;
     cursor: pointer;
-    font-size: 16px;
-    padding: 10px 15px;
-    transition: background-color 0.3s;
+    font: inherit;
+    font-weight: bold;
+    padding: var(--button-padding);
+    transition: background-color var(--transition-duration);
 }
 
 button:hover {
-    background-color: #45a049;
+    background-color: var(--button-bg-hover);
 }
 
 .error-message {
-    color: red;
-    font-size: 14px;
+    color: var(--error-color);
+    font-weight: bold;
 }
 
 h2 {
-    margin-bottom: 10px;
+    margin-bottom: var(--small-spacing);
 }
 
 section {
-    margin-bottom: 20px;
+    margin-bottom: var(--medium-spacing);
 }
