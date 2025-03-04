@@ -48,9 +48,9 @@ function parseIPAddress(input) {
 
         const groups = textOctets.map((text, i) => {
             const num = parseInt(text, 10);
+            const validNum = !isNaN(num) && num >= 0 && num <= 255;
             const valid = i < 4 &&
-                (text !== "" || i === lastIndex) &&
-                !isNaN(num) && num >= 0 && num <= 255;
+                (validNum || (text === "" && i === lastIndex));
 
             return {
                 num,
@@ -74,9 +74,9 @@ function parseIPAddress(input) {
 
         const groups = textGroups.map((text, i) => {
             const num = parseInt(text, 16);
+            const validNum = !isNaN(num) && num >= 0 && num <= 0xffff;
             const valid = i < 16 &&
-                (text === "" && (!seenEmpty || i === lastIndex) ||
-                    !isNaN(num) && num >= 0 && num <= 0xffff);
+                (validNum || (text === "" && (!seenEmpty || i === lastIndex)));
 
             if (text === "") {
                 seenEmpty = true;
