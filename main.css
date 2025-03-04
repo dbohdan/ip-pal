@@ -1,0 +1,114 @@
+:root {
+    box-sizing: border-box;
+}
+
+* {
+    box-sizing: inherit;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0 auto;
+    max-width: 900px;
+    padding: 20px;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+fieldset {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+legend {
+    font-weight: bold;
+}
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+input[type="text"] {
+    background-color: transparent;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: monospace;
+    font-size: 18px;
+    padding: 10px;
+    position: relative;
+    width: 100%;
+    z-index: 2;
+}
+
+output {
+    background-color: #f8f8f8;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: block;
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    margin-top: 10px;
+    min-height: 42px;
+    padding: 10px;
+    width: 100%;
+}
+
+.highlight-span {
+    border-radius: 3px;
+    margin: 0 1px;
+    padding: 2px 3px;
+}
+
+.highlight-span-empty {
+    padding: 0;
+}
+
+textarea {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: 'Courier New', monospace;
+    height: 200px;
+    padding: 10px;
+    width: 100%;
+}
+
+button {
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 15px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.error-message {
+    color: red;
+    font-size: 14px;
+}
+
+h2 {
+    margin-bottom: 10px;
+}
+
+section {
+    margin-bottom: 20px;
+}

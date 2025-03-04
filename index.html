@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ip-pal - Palette-based IP address highlighter</title>
+
+    <link rel="stylesheet" type="text/css" href="main.css" media="screen">
+</head>
+<body>
+    <header>
+        <h1>ip-pal</h1>
+        <p>Palette-based IP address highlighter</p>
+    </header>
+
+    <main>
+        <section>
+            <form>
+                <fieldset>
+                    <legend>Enter IPv4 or IPv6</legend>
+                    <label for="ip-input">IP address:</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="ip-input" placeholder="192.168.1.1 or 2001:db8::ff00:42:8329">
+                    </div>
+                    <output id="highlight-display"></output>
+                </fieldset>
+            </form>
+        </section>
+
+        <section>
+            <button id="download-svg">Download SVG</button>
+            <p id="svg-error" class="error-message"></p>
+        </section>
+
+        <section>
+            <h2>Edit color palette</h2>
+            <p>Enter a valid GIMP Palette Format Version 2 file:</p>
+            <textarea id="palette-editor"></textarea>
+            <div style="margin-top: 10px;">
+                <button id="update-palette">Update palette</button>
+                <button id="reset-palette">Reset to default</button>
+            </div>
+            <p id="palette-error" class="error-message"></p>
+        </section>
+    </main>
+
+    <script src="index.js"></script>
+
+    <footer>
+        <a href="https://github.com/dbohdan/ip-pal">Source code</a>.
+    </footer>
+</body>
+</html>
