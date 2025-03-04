@@ -34,6 +34,12 @@ const IPV6 = "ipv6";
 const SPAN = "span";
 const UNKNOWN = "unknown";
 
+const SVG_EMPTY_GROUP_WIDTH = 1;
+const SVG_FONT_SIZE = 16;
+const SVG_GROUP_WIDTH = 60;
+const SVG_HEIGHT = 30;
+const SVG_SEPARATOR_WIDTH = 20; // Width allocated for separators.
+
 let palette = [];
 
 function textColor(bgColor) {
@@ -95,6 +101,13 @@ function parseIPAddress(input) {
         };
     }
 
+    if (/^\s*$/.test(input)) {
+        return {
+            type: UNKNOWN,
+            groups: [],
+        };
+    }
+
     return {
         type: UNKNOWN,
         groups: [
@@ -103,15 +116,10 @@ function parseIPAddress(input) {
     };
 }
 
-function updateHighlight() {
-    const input = document.getElementById("ip-input").value.trim();
-    const displayDiv = document.getElementById("highlight-display");
-    displayDiv.innerHTML = "";
-
-    if (!input) return;
-
+// Generate rendering data for an IP address.
+function highlight(input) {
     const { type, groups } = parseIPAddress(input);
-    console.log(groups);
+    const elements = [];
 
     for (let i = 0; i < groups.length; i++) {
         const group = groups[i];
@@ -126,27 +134,127 @@ function updateHighlight() {
             color = textColor(background);
         }
 
-        const span = document.createElement(SPAN);
-        span.className = group.text === "" && group.valid
+        const spanClass = group.text === "" && group.valid
             ? HIGHLIGHT_SPAN_EMPTY
             : HIGHLIGHT_SPAN;
-        span.style.background = background.toHex();
-        span.style.color = color.toHex();
-        span.textContent = group.text;
 
-        displayDiv.appendChild(span);
+        elements.push({
+            background: background.toHex(),
+            class: spanClass,
+            color: color.toHex(),
+            isSeparator: false,
+            text: group.text,
+        });
 
-        // Add a separator.
+        // Add a separator if not the last element.
         if (i < groups.length - 1) {
-            const separator = document.createElement(SPAN);
-            separator.textContent = type === IPV4 ? "." : ":";
-            displayDiv.appendChild(separator);
+            elements.push({
+                text: type === IPV4 ? "." : ":",
+                isSeparator: true,
+            });
         }
+    }
+
+    return {
+        type,
+        elements,
+    };
+}
+
+// Render the highlighting data to a DOM container.
+function renderHighlightToDOM(data, container) {
+    container.innerHTML = "";
+
+    if (!data) {
+        return;
+    }
+
+    for (elem of data.elements) {
+        const span = document.createElement(SPAN);
+
+        if (elem.isSeparator) {
+            span.textContent = elem.text;
+        } else {
+            span.className = elem.class;
+            span.style.background = elem.background;
+            span.style.color = elem.color;
+            span.textContent = elem.text;
+        }
+
+        container.appendChild(span);
     }
 }
 
+function updateHighlight() {
+    const input = document.getElementById("ip-input").value.trim();
+    const output = document.getElementById("highlight-display");
+
+    const highlightData = highlight(input);
+    console.log(highlightData);
+    renderHighlightToDOM(highlightData, output);
+}
+
 function downloadSVG() {
-    // TODO.
+    const input = document.getElementById("ip-input").value.trim();
+    const highlightData = highlight(input);
+
+    try {
+        if (!highlightData) {
+            throw new Error("no IP address");
+        }
+
+        let svgContent = "";
+        let x = 0;
+
+        for (const elem of highlightData.elements) {
+            if (elem.isSeparator) {
+                // Render the separator (e.g., ":").
+                const textX = x + SVG_SEPARATOR_WIDTH / 2;
+                const textY = SVG_HEIGHT / 2;
+
+                svgContent +=
+                    `<text x="${textX}" y="${textY}" text-anchor="middle" dominant-baseline="middle" font-family="sans-serif" font-size="${SVG_FONT_SIZE}" fill="black">${elem.text}</text>`;
+                x += SVG_SEPARATOR_WIDTH;
+            } else if (elem.text === "") {
+                // Render an empty group with a smaller width.
+                const rectX = x;
+                const rectY = 0;
+
+                svgContent +=
+                    `<rect x="${rectX}" y="${rectY}" width="${SVG_EMPTY_GROUP_WIDTH}" height="${SVG_HEIGHT}" fill="${elem.background}" />`;
+                // No text is added for empty groups.
+                x += SVG_EMPTY_GROUP_WIDTH;
+            } else {
+                // Render a regular group with full width.
+                const rectX = x;
+                const rectY = 0;
+                svgContent +=
+                    `<rect x="${rectX}" y="${rectY}" width="${SVG_GROUP_WIDTH}" height="${SVG_HEIGHT}" fill="${elem.background}" />`;
+
+                const textX = x + SVG_GROUP_WIDTH / 2;
+                const textY = SVG_HEIGHT / 2;
+
+                svgContent +=
+                    `<text x="${textX}" y="${textY}" text-anchor="middle" dominant-baseline="middle" font-family="sans-serif" font-size="${SVG_FONT_SIZE}" fill="${elem.color}">${elem.text}</text>`;
+                x += SVG_GROUP_WIDTH;
+            }
+        }
+
+        svgDocument =
+            `<svg width="${x}" height="${SVG_HEIGHT}" xmlns="http://www.w3.org/2000/svg">${svgContent}</svg>`;
+
+        // Download the file.
+        const blob = new Blob([svgDocument], { type: "image/svg+xml" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `ip-${input.replace(/[\.:]/g, "-")}.svg`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+    } catch (error) {
+        document.getElementById("svg-error").textContent = error.message;
+    }
 }
 
 function parseGimpPalette(text) {
@@ -210,16 +318,15 @@ async function loadDefaultPalette() {
         document.getElementById("palette-editor").value = await response.text();
         updatePalette();
     } catch (error) {
-        console.error("Error loading palette:", error);
         document.getElementById("palette-error").textContent = error.message;
     }
 }
 
 function updatePalette() {
-    const paletteEditor = document.getElementById("palette-editor");
     const paletteError = document.getElementById("palette-error");
 
     try {
+        const paletteEditor = document.getElementById("palette-editor");
         const newPalette = parseGimpPalette(paletteEditor.value).colors.map(
             (entry) => entry.color,
         );
