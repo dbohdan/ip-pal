@@ -1,4 +1,4 @@
-# ip-pal
+# IP-pal
 
 Highlight IP addresses (IPv4 and IPv6) using a color palette.
 
