@@ -9,7 +9,7 @@ class RGBColor {
         return (0.299 * this.r + 0.587 * this.g + 0.114 * this.b) / 255;
     }
 
-    toHex() {
+    toString() {
         const toHex = (value) => {
             const hex = Math.round(value).toString(16);
             return hex.length === 1 ? "0" + hex : hex;
@@ -25,9 +25,10 @@ const WHITE = new RGBColor(0xff, 0xff, 0xff);
 
 const DEC_DIGITS = /^[0-9]+$/;
 const DEFAULT_BACKGROUND = WHITE;
-const DEFAULT_PALETTE = "palette/apollo.gpl";
-const EMPTY_COLOR = DEFAULT_BACKGROUND;
-const ERROR_COLOR = RED;
+const DEFAULT_PALETTE = "palette/win95.gpl";
+const EMPTY_BACKGROUND = DEFAULT_BACKGROUND;
+const ERROR_COLOR = BLACK;
+const ERROR_BACKGROUND = RED;
 const HEX_DIGITS = /^[0-9a-fA-F]+$/;
 const HIGHLIGHT_SPAN_EMPTY = "highlight-span-empty";
 const HIGHLIGHT_SPAN = "highlight-span";
@@ -142,12 +143,12 @@ function highlight(input) {
     for (let i = 0; i < groups.length; i++) {
         const group = groups[i];
 
-        let color = DEFAULT_BACKGROUND;
-        let background = ERROR_COLOR;
+        let color = ERROR_COLOR;
+        let background = ERROR_BACKGROUND;
 
         if (group.valid) {
             background = group.text === ""
-                ? EMPTY_COLOR
+                ? EMPTY_BACKGROUND
                 : palette[group.num % palette.length];
             color = textColor(background);
         }
@@ -157,9 +158,9 @@ function highlight(input) {
             : HIGHLIGHT_SPAN;
 
         elements.push({
-            background: background.toHex(),
+            background: background.toString(),
             class: spanClass,
-            color: color.toHex(),
+            color: color.toString(),
             isSeparator: false,
             text: group.text,
         });
