@@ -135,6 +135,16 @@ function parseIPAddress(input) {
     };
 }
 
+function pickIndex(array, num) {
+    let i = 0;
+    while (num > 0) {
+        i += num % array.length;
+        num = Math.floor(num / array.length);
+    }
+
+    return i % array.length;
+}
+
 // Generate rendering data for an IP address.
 function highlight(input) {
     const { type, groups } = parseIPAddress(input);
@@ -149,7 +159,7 @@ function highlight(input) {
         if (group.valid) {
             background = group.text === ""
                 ? EMPTY_BACKGROUND
-                : palette[group.num % palette.length];
+                : palette[pickIndex(palette, group.num)];
             color = textColor(background);
         }
 
