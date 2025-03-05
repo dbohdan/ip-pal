@@ -37,11 +37,13 @@ const IPV6 = "ipv6";
 const SPAN = "span";
 const UNKNOWN = "unknown";
 
-const SVG_EMPTY_GROUP_WIDTH = 1;
-const SVG_FONT_SIZE = 16;
-const SVG_GROUP_WIDTH = 60;
+const SVG_CHAR_WIDTH = 10;
+const SVG_CORNER_RADIUS = 3;
+const SVG_EMPTY_GROUP_WIDTH = 0;
+const SVG_FONT_SIZE = 18;
+const SVG_GROUP_WIDTH = 10;
 const SVG_HEIGHT = 30;
-const SVG_SEPARATOR_WIDTH = 20; // Width allocated for separators.
+const SVG_SEPARATOR_WIDTH = 15;
 
 let palette = [];
 
@@ -256,15 +258,17 @@ function downloadSVG() {
                 // Render a regular group with full width.
                 const rectX = x;
                 const rectY = 0;
-                svgContent +=
-                    `<rect x="${rectX}" y="${rectY}" width="${SVG_GROUP_WIDTH}" height="${SVG_HEIGHT}" fill="${elem.background}" />`;
+                const rectWidth = SVG_GROUP_WIDTH + SVG_CHAR_WIDTH * elem.text.length;
 
-                const textX = x + SVG_GROUP_WIDTH / 2;
+                svgContent +=
+                    `<rect x="${rectX}" y="${rectY}" width="${rectWidth}" height="${SVG_HEIGHT}" rx="${SVG_CORNER_RADIUS}" fill="${elem.background}" />`;
+
+                const textX = x + rectWidth / 2;
                 const textY = SVG_HEIGHT / 2;
 
                 svgContent +=
                     `<text x="${textX}" y="${textY}" text-anchor="middle" dominant-baseline="middle" font-family="sans-serif" font-size="${SVG_FONT_SIZE}" fill="${elem.color}">${elem.text}</text>`;
-                x += SVG_GROUP_WIDTH;
+                x += rectWidth;
             }
         }
 
