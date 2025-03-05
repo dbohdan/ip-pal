@@ -347,7 +347,7 @@ async function loadDefaultPalette() {
             throw new Error(`Failed to load palette: ${response.status}`);
         }
 
-        document.getElementById("palette-editor").value = await response.text();
+        document.getElementById("palette-editor").value = (await response.text()).trim();
         updatePalette();
     } catch (error) {
         document.getElementById("palette-error").textContent = error.message;
