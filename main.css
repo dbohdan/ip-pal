@@ -49,6 +49,10 @@ body {
     padding: var(--large-padding);
 }
 
+header, footer {
+    text-align: center;
+}
+
 main {
     display: flex;
     flex-direction: column;
